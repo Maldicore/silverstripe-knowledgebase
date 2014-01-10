@@ -2,13 +2,13 @@
 
 class KnowledgeBaseCategory extends KnowledgeBasePage
 {
-    static $singular_name = 'KB Category';
+    private static $singular_name = 'KB Category';
 
-    static $db = array(
+    private static $db = array(
         'Description' => 'Varchar(255)'
     );
     
-    static $allowed_children = array(
+    private static $allowed_children = array(
         'KnowledgeBaseArticle',
         'KnowledgeBaseCategory'
     );
@@ -16,7 +16,7 @@ class KnowledgeBaseCategory extends KnowledgeBasePage
     function getCMSFields()
     {
         $fields = parent::getCMSFields();
-        $fields->addFieldToTab('Root.Content.Main', new TextField('Description', 'Category Description', null, 255), 'Content');
+        $fields->addFieldToTab('Root.Main', new TextField('Description', 'Category Description', null, 255), 'Content');
         return $fields;
     }
 }

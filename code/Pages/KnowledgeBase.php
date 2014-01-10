@@ -8,14 +8,14 @@ class KnowledgeBase extends KnowledgeBasePage
 {
     public static $create_knowledgebase_pages = true;
     
-    static $allowed_children = array(
+    private static $allowed_children = array(
         'KnowledgeBaseArticle',
         'KnowledgeBaseCategory'
     );
     
-    static $singular_name = 'KB Section';
+    private static $singular_name = 'KB Section';
 
-    static $has_many = array('Articles' => 'KnowledgeBaseArticle');
+    private static $has_many = array('Articles' => 'KnowledgeBaseArticle');
 
     /**
      * Add default records to database.

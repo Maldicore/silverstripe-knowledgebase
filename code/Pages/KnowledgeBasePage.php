@@ -9,7 +9,7 @@ class KnowledgeBasePage extends Page
 
     public static $default_category_order = '`SiteTree`.`MenuTitle` ASC';
 
-    static $db = array(
+    private static $db = array(
         /**
          * List of ancestor page IDs (not including self).
          * Denormalised node position used to assist in filtering by tree
@@ -187,15 +187,15 @@ class KnowledgeBasePage extends Page
  */
 class KnowledgeBasePage_Controller extends Page_Controller
 {
-    static $allowed_actions = array('ArticleQuickSearchForm', 'findarticles');
+    private static $allowed_actions = array('ArticleQuickSearchForm', 'findarticles');
 
     protected function ArticleQuickSearchForm()
     {
-        $fields = new FieldSet(
+        $fields = new FieldList(
                         new TextField('SearchText', 'Search', null, 512)
         );
 
-        $actions = new FieldSet(
+        $actions = new FieldList(
                         new FormAction('findarticles', 'Search')
         );
 

@@ -8,7 +8,7 @@
 
         <% if Results %>
             <ul id="SearchResults">
-                <% control Results %>
+                <% loop Results %>
                 <li>
                     <% if MenuTitle %>
                         <h3><a class="searchResultHeader" href="$Link">$MenuTitle</a></h3>
@@ -20,7 +20,7 @@
                     <% end_if %>
                     <a class="readMoreLink" href="$Link" title="<% sprintf(_t('READ_MORE_ABOUT','Read more about &quot;%s&quot;'),$Title.ATT) %>"><% sprintf(_t('READ_MORE_ABOUT','Read more about &quot;%s&quot;'),$Title.XML) %>...</a>
                 </li>
-                <% end_control %>
+                <% end_loop %>
             </ul>
         <% else %>
             <p><% _t('SEARCH_NO_RESULTS', 'Sorry, your search query did not return any results.') %></p>
@@ -35,13 +35,13 @@
                     <a class="prev" href="$Results.PrevLink" title="<% _t('PREV', 'Prev') %>"><% _t('PREV', 'Prev') %></a>
                 <% end_if %>
                 <span>
-                <% control Results.SummaryPagination(5) %>
+                <% loop Results.SummaryPagination(5) %>
                     <% if CurrentBool %>
                         $PageNum
                     <% else %>
                         <a href="$Link" title="$PageNum">$PageNum</a>
                     <% end_if %>
-                <% end_control %>
+                <% end_loop %>
                 </span>
 
             </div>

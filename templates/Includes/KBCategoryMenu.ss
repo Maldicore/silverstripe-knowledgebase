@@ -2,20 +2,20 @@
     <h3><% _t('CATEGORIES', 'Categories') %></h3>
 
     <ul class="CategoryMenu">
-        <% control BaseCategories %>
+        <% loop BaseCategories %>
             <li class="$LinkingMode">
                 <a href="$Link" class="$LinkingMode">$MenuTitle.XML <% if SubArticles %>($SubArticles.Count)<% end_if %></a>
 
                 <% if Categories %>
                     <% if LinkOrSection = section %>
                         <ul>
-                            <% control Categories %>
+                            <% loop Categories %>
                                 <li><a href="$Link" class="$LinkingMode">$MenuTitle.XML</a></li>
-                            <% end_control %>
+                            <% end_loop %>
                         </ul>
                     <% end_if %>
                 <% end_if %>
             </li>
-        <% end_control %>
+        <% end_loop %>
     </ul>
 </div>

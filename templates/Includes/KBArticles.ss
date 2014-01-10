@@ -4,9 +4,9 @@
     <div class="ArticleSection">
         <h2><% _t('ARTICLES', 'Articles') %></h2>
         <ul class="ArticleList">
-            <% control ChildArticles %>
+            <% loop ChildArticles %>
                 <% include KBArticleLink %>
-            <% end_control %>
+            <% end_loop %>
         </ul>
     </div>
 <% end_if %>

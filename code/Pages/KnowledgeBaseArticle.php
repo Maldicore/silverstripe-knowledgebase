@@ -5,13 +5,13 @@
  */
 class KnowledgeBaseArticle extends KnowledgeBasePage
 {
-    static $singular_name = 'KB Article';
+    private static $singular_name = 'KB Article';
     
-    static $db = array(
+    private static $db = array(
         'Featured' => 'Boolean'
     );
 
-    static $has_many = array(
+    private static $has_many = array(
         'Ratings' => 'KnowledgeBaseArticleRating'
     );
     
@@ -64,7 +64,7 @@ class KnowledgeBaseArticle extends KnowledgeBasePage
     function getCMSFields()
     {
         $fields = parent::getCMSFields();
-        $fields->addFieldToTab('Root.Content.Main', new CheckboxField('Featured','Feature this article?'), 'Content');
+        $fields->addFieldToTab('Root.Main', new CheckboxField('Featured','Feature this article?'), 'Content');
         return $fields;
     }
 
@@ -72,7 +72,7 @@ class KnowledgeBaseArticle extends KnowledgeBasePage
 
 class KnowledgeBaseArticle_Controller extends KnowledgeBasePage_Controller
 {
-    static $allowed_actions = array('rate');
+    private static $allowed_actions = array('rate');
 
     function init()
     {
