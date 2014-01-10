@@ -17,7 +17,7 @@ This module has been tested to work (and look terrible) out of the box with the
 
 ## Requirements
 
- * SilverStripe 2.4.7, may work on lower versions
+ * SilverStripe 2.4.7, may work on lower versions (MIGRATING TO 3.x)
  * PHP 5.2
 
 ## Installation Instructions
