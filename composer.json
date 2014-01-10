@@ -1,0 +1,16 @@
+{
+        "name": "silverstripe/knowledgebase",
+        "description": "SilverStripe knowledgebase module",
+        "type": "silverstripe-module",
+        "keywords": ["silverstripe", "faq", "knowledgebase"],
+        "authors": [{
+                "name": "Maldicore",
+                "email": "info@maldicore.com"
+        }, {
+                "name": "Yusuf Abdulla Shunan",
+                "email": "shunan@maldicore.com"
+        }],
+        "require": {
+                "silverstripe/framework": "~3.1"
+        }
+}
