@@ -5,9 +5,11 @@
  */
 class KnowledgeBasePage extends Page
 {
-    public static $default_article_order = '`SiteTree`.`MenuTitle` ASC';
+    // public static $default_article_order = '`SiteTree`.`MenuTitle` ASC';
+    public static $default_article_order = '';
 
-    public static $default_category_order = '`SiteTree`.`MenuTitle` ASC';
+    // public static $default_category_order = '`SiteTree`.`MenuTitle` ASC';
+    public static $default_category_order = '';
 
     private static $db = array(
         /**
@@ -291,22 +293,31 @@ class KnowledgeBasePage_Controller extends Page_Controller
      * Retrieves the top rated articles in the knowledge base
      * @param integer $limit Limit to number of articles to receive
      * @return DataObjectSet list of {@see KnowledgeBaseArticle}
-     */
+     **/
     public function BestArticles($limit = 5)
     {
+
         $kbID = $this->data()->getKnowledgeBaseID();
+
         $condition =
                 "(
                     `KnowledgeBasePage`.`TreePosition` LIKE '$kbID.%'
                     OR `KnowledgeBasePage`.`TreePosition` = '$kbID'
                 )";
-        $join = " LEFT JOIN (
-                SELECT ArticleID, AVG(`Rating`) AS Rating 
-                FROM `KnowledgeBaseArticleRating`
-                GROUP BY ArticleID
-            ) `Ratings`
-            ON `SiteTree`.`ID` = `Ratings`.`ArticleID`";
-        return DataObject::get('KnowledgeBaseArticle', $condition, '`Ratings`.`Rating` DESC', $join, $limit);
+
+                // Old 2.4 Query commented out for future reference
+                // $left_join = " LEFT JOIN (
+                //         SELECT ArticleID, AVG(`Rating`) AS Rating 
+                //         FROM `KnowledgeBaseArticleRating`
+                //         GROUP BY ArticleID
+                //     ) `Ratings`
+                //     ON `SiteTree`.`ID` = `Ratings`.`ArticleID`";
+                // return DataObject::get('KnowledgeBaseArticle', $condition, '`Ratings`.`Rating` DESC', $left_join, $limit);
+
+            return DataObject::get('KnowledgeBaseArticle', $condition)
+                ->leftJoin("KnowledgeBaseArticleRating","\"KnowledgeBaseArticleRating\".\"ArticleID\" = \"KnowledgeBaseArticle\".\"ID\"")
+                ->sort("\"KnowledgeBaseArticleRating\".\"Rating\"")
+                ->limit($limit);
     }
 
     function init()
