@@ -70,8 +70,12 @@ class KnowledgeBasePage extends Page
     public function ChildCategories()
     {
         return DataObject::get(
-                        'KnowledgeBaseCategory', "ParentID = {$this->ID}", self::$default_category_order
+                'KnowledgeBaseCategory', "ParentID = {$this->ID}", self::$default_category_order
         );
+    }
+
+    public function AllCategories(){
+        return DataObject::get('KnowledgeBaseCategory');
     }
 
     /**
@@ -325,14 +329,16 @@ class KnowledgeBasePage_Controller extends Page_Controller
         parent::init();
 
         // Jquery UI and themes
-        Requirements::javascript(THIRDPARTY_DIR . '/jquery/jquery-packed.js');
+        Requirements::javascript(THIRDPARTY_DIR . '/jquery/jquery.min.js');
         Requirements::javascript(THIRDPARTY_DIR . '/jquery-ui/minified/jquery.ui.core.min.js');
-        Requirements::javascript(THIRDPARTY_DIR . '/jquery-ui/minified/jquery.ui.widget.min.js');
-        Requirements::javascript(THIRDPARTY_DIR . '/jquery-ui/minified/jquery.ui.position.min.js');
-        Requirements::javascript(THIRDPARTY_DIR . '/jquery-ui/minified/jquery.ui.autocomplete.min.js');
-        Requirements::css(THIRDPARTY_DIR . '/jquery-ui-themes/smoothness/jquery.ui.core.css');
-        Requirements::css(THIRDPARTY_DIR . '/jquery-ui-themes/smoothness/jquery.ui.autocomplete.css');
-        Requirements::css(THIRDPARTY_DIR . '/jquery-ui-themes/smoothness/jquery.ui.theme.css');
+        // Requirements::javascript(THIRDPARTY_DIR . '/jquery-ui/minified/jquery.ui.widget.min.js');
+        // Requirements::javascript(THIRDPARTY_DIR . '/jquery-ui/minified/jquery.ui.position.min.js');
+        // Requirements::javascript(THIRDPARTY_DIR . '/jquery-ui/minified/jquery.ui.autocomplete.min.js');
+        Requirements::javascript(THIRDPARTY_DIR . '/jquery-ui/jquery.ui.min.js');
+        // Requirements::css(THIRDPARTY_DIR . '/jquery-ui-themes/smoothness/jquery.ui.core.css');
+        // Requirements::css(THIRDPARTY_DIR . '/jquery-ui-themes/smoothness/jquery.ui.autocomplete.css');
+        // Requirements::css(THIRDPARTY_DIR . '/jquery-ui-themes/smoothness/jquery.ui.theme.css');
+        Requirements::css(THIRDPARTY_DIR . '/jquery-ui-themes/smoothness/jquery.ui.min.css');
 
         Requirements::javascript(KNOWLEDGEBASE_MODULE_DIR . '/javascript/kb.search.js');
     }
