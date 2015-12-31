@@ -11,5 +11,4 @@ class KnowledgeBaseArticleRating extends DataObject
         'Article' => 'KnowledgeBaseArticle',
         'Author' => 'Member' // author of the rating, not the article
     );
-
 }

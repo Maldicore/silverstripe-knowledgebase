@@ -23,8 +23,7 @@ class KnowledgeBaseArticle extends KnowledgeBasePage
     {
         $category = $this->Parent();
         $items = array();
-        while($category && $category->exists())
-        {
+        while ($category && $category->exists()) {
             $items[] = $category->MenuTitle;
             $category = $category->Parent();
         }
@@ -61,20 +60,19 @@ class KnowledgeBaseArticle extends KnowledgeBasePage
         return intval(DB::query('SELECT ROUND(AVG(`Rating`)) as Rating FROM `KnowledgeBaseArticleRating` WHERE `ArticleID` = ' . $this->ID)->value());
     }
     
-    function getCMSFields()
+    public function getCMSFields()
     {
         $fields = parent::getCMSFields();
-        $fields->addFieldToTab('Root.Main', new CheckboxField('Featured','Feature this article?'), 'Content');
+        $fields->addFieldToTab('Root.Main', new CheckboxField('Featured', 'Feature this article?'), 'Content');
         return $fields;
     }
-
 }
 
 class KnowledgeBaseArticle_Controller extends KnowledgeBasePage_Controller
 {
     private static $allowed_actions = array('rate');
 
-    function init()
+    public function init()
     {
         parent::init();
 
@@ -89,8 +87,9 @@ class KnowledgeBaseArticle_Controller extends KnowledgeBasePage_Controller
      */
     protected function ratingIdentifier()
     {
-        if ($cookie = Cookie::get('RatingIdentifier'))
+        if ($cookie = Cookie::get('RatingIdentifier')) {
             return $cookie;
+        }
         Cookie::set('RatingIdentifier', $cookie = uniqid());
         return $cookie;
     }
@@ -101,21 +100,21 @@ class KnowledgeBaseArticle_Controller extends KnowledgeBasePage_Controller
     protected function userAlreadyRatedArticle()
     {
         // check by cookie
-        if ($cookie = $this->ratingIdentifier())
-        {
+        if ($cookie = $this->ratingIdentifier()) {
             $result = DB::query(sprintf("SELECT COUNT(*) FROM KnowledgeBaseArticleRating WHERE ArticleID = %d AND Cookie = '%s'", $this->data()->ID, Convert::raw2sql($cookie)
                             ))->value();
-            if ($result > 0)
+            if ($result > 0) {
                 return true;
+            }
         }
 
         // check by user
-        if ($memberID = Member::currentUserID())
-        {
+        if ($memberID = Member::currentUserID()) {
             $result = DB::query(sprintf('SELECT COUNT(*) FROM KnowledgeBaseArticleRating WHERE ArticleID = %d AND AuthorID = %d', $this->data()->ID, $memberID
                             ))->value();
-            if ($result > 0)
+            if ($result > 0) {
                 return true;
+            }
         }
 
         return false;
@@ -128,28 +127,31 @@ class KnowledgeBaseArticle_Controller extends KnowledgeBasePage_Controller
      */
     public function rate()
     {
-        if(!$this->data()->RatingEnabled)
+        if (!$this->data()->RatingEnabled) {
             return json_message(array(
                     'Message' => _t('ERROR_RATING_DISABLED', "Rating is disabled on this article"),
                     'Result' => 'Error'
                 ));
+        }
             
         // Ensure that this user isn't voting multiple times
-        if ($this->userAlreadyRatedArticle())
+        if ($this->userAlreadyRatedArticle()) {
             return json_encode(array(
                         'Message' => _t('ERROR_ALREADY_VOTED', "You've already voted on this article"),
                         'Result' => 'Error'
                     ));
+        }
 
         // Make sure the rating is valid
         $rating = isset($_REQUEST['rate'])
                 ? intval($_REQUEST['rate'])
                 : null;
-        if (is_null($rating) || $rating < 0 || $rating > 20)
+        if (is_null($rating) || $rating < 0 || $rating > 20) {
             return json_encode(array(
                         'Message' => _t('ERROR_PLEASE_SELECT', "Please select a rating"),
                         'Result' => 'Error'
                     ));
+        }
 
         // Save the  record
         $record = new KnowledgeBaseArticleRating();
