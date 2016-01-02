@@ -25,16 +25,18 @@ class KnowledgeBase extends KnowledgeBasePage
      * records when the database is built, but make sure you call
      * parent::requireDefaultRecords().
      */
-    function requireDefaultRecords()
+    public function requireDefaultRecords()
     {
         parent::requireDefaultRecords();
 
         // Ignore inherited pages
-        if ($this->class != get_class() || !self::$create_knowledgebase_pages)
+        if ($this->class != get_class() || !self::$create_knowledgebase_pages) {
             return;
+        }
 
-        if (DB::query("SELECT COUNT(*) FROM `SiteTree` WHERE `SiteTree`.`ClassName` = '" . get_class() . "'")->value() > 0)
+        if (DB::query("SELECT COUNT(*) FROM `SiteTree` WHERE `SiteTree`.`ClassName` = '" . get_class() . "'")->value() > 0) {
             return;
+        }
 
         $kbSection = new KnowledgeBase();
         $kbSection->Title = _t('KnowledgeBase.DEFAULT_TITLE', 'Knowledge Base');
@@ -69,7 +71,6 @@ class KnowledgeBase extends KnowledgeBasePage
         $kbArticle->flushCache();
         DB::alteration_message('Knowledge Base Article created', 'created');
     }
-
 }
 
 class KnowledgeBase_Controller extends KnowledgeBasePage_Controller

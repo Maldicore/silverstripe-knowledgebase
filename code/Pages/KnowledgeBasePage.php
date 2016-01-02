@@ -27,7 +27,7 @@ class KnowledgeBasePage extends Page
         'TreePosition' => 'Varchar(255)'
     );
 
-    function canCreate($member = null)
+    public function canCreate($member = null)
     {
         // Alternative to making this an abstract class, which crashes silverstripe
         return parent::canCreate($member) &&
@@ -38,12 +38,13 @@ class KnowledgeBasePage extends Page
      * Extracts ID of the current knowledge base
      * @return null 
      */
-    function getKnowledgeBaseID()
+    public function getKnowledgeBaseID()
     {
-        if ($this instanceof KnowledgeBase)
+        if ($this instanceof KnowledgeBase) {
             return $this->ID;
+        }
 
-        return (($index = strpos($this->TreePosition, '.')) !== FALSE)
+        return (($index = strpos($this->TreePosition, '.')) !== false)
                 ? substr($this->TreePosition, 0, $index)
                 : $this->TreePosition;
     }
@@ -51,14 +52,16 @@ class KnowledgeBasePage extends Page
     /**
      * Determines the current knowledgebase for this page
      */
-    function getKnowledgeBase()
+    public function getKnowledgeBase()
     {
-        if ($this instanceof KnowledgeBase)
+        if ($this instanceof KnowledgeBase) {
             return $this;
+        }
 
         $kbID = $this->getKnowledgeBaseID();
-        if (empty($kbID))
+        if (empty($kbID)) {
             return null;
+        }
 
         return DataObject::get_by_id('KnowledgeBase', $kbID);
     }
@@ -74,7 +77,8 @@ class KnowledgeBasePage extends Page
         );
     }
 
-    public function AllCategories(){
+    public function AllCategories()
+    {
         return DataObject::get('KnowledgeBaseCategory');
     }
 
@@ -127,8 +131,9 @@ class KnowledgeBasePage extends Page
     public function getChildTreeFilter()
     {
         $prefix = $this->TreePosition;
-        if (!empty($prefix))
+        if (!empty($prefix)) {
             $prefix .= '.';
+        }
         return $prefix . $this->ID;
     }
 
@@ -139,16 +144,17 @@ class KnowledgeBasePage extends Page
     {
         $prefix = $this->getChildTreeFilter();
 
-        foreach ($this->Children() as $child)
-        {
-            if (!($child instanceof KnowledgeBasePage))
+        foreach ($this->Children() as $child) {
+            if (!($child instanceof KnowledgeBasePage)) {
                 continue;
+            }
 
             $child->TreePosition = $prefix;
-            if ($doPublish)
+            if ($doPublish) {
                 $child->doPublish();
-            else
+            } else {
                 $child->write();
+            }
         }
     }
 
@@ -159,20 +165,21 @@ class KnowledgeBasePage extends Page
     {
         $parent = $this->Parent();
 
-        if ($parent instanceof KnowledgeBasePage)
+        if ($parent instanceof KnowledgeBasePage) {
             $this->TreePosition = $parent->ChildTreeFilter;
-        else // Handle case for root element
+        } else { // Handle case for root element
             $this->TreePosition = '';
+        }
     }
 
-    function onBeforeWrite()
+    public function onBeforeWrite()
     {
         parent::onBeforeWrite();
 
         $this->updateTreePosition();
     }
 
-    function onAfterWrite()
+    public function onAfterWrite()
     {
         parent::onAfterWrite();
 
@@ -180,12 +187,11 @@ class KnowledgeBasePage extends Page
         $this->updateChildTreePositions(false);
     }
 
-    function onAfterPublish()
+    public function onAfterPublish()
     {
         // Publish tree positions for all children
         $this->updateChildTreePositions(true);
     }
-
 }
 
 /**
@@ -212,7 +218,7 @@ class KnowledgeBasePage_Controller extends Page_Controller
 
         // Filter articles by individual knowledge base
         $kbID = $this->data()->getKnowledgeBaseID();
-        if ($kbID)
+        if ($kbID) {
             $form->setExtraFilter("ClassName = 'KnowledgeBaseArticle' AND ID IN 
                 (
                     SELECT `ID`
@@ -220,20 +226,19 @@ class KnowledgeBasePage_Controller extends Page_Controller
                     WHERE `KnowledgeBasePage`.`TreePosition` LIKE '$kbID.%' 
                     OR `KnowledgeBasePage`.`TreePosition` = '$kbID'
                 )");
-        else
+        } else {
             $form->setExtraFilter("ClassName = 'KnowledgeBaseArticle'");
+        }
         return $form;
     }
 
     public function findarticles($data, $form)
     {
         $results = $form->getResults();
-        if (Director::is_ajax())
-        {
+        if (Director::is_ajax()) {
             $output = array();
-            if ($results)
-                foreach ($results as $result)
-                {
+            if ($results) {
+                foreach ($results as $result) {
                     $rating = ($result->RatingEnabled && $result->RatingCount)
                             ? sprintf('<div class="StaticRating Rating_%1$s" title="Rated %1$s/10">%1$s/10</div>', intval($result->Rating))
                             : '';
@@ -245,6 +250,7 @@ class KnowledgeBasePage_Controller extends Page_Controller
                         'rating' => $rating
                     );
                 }
+            }
             return json_encode($output);
         }
         $data = array(
@@ -288,8 +294,9 @@ class KnowledgeBasePage_Controller extends Page_Controller
                     `KnowledgeBasePage`.`TreePosition` LIKE '$kbID.%'
                     OR `KnowledgeBasePage`.`TreePosition` = '$kbID'
                 )";
-        if ($extraFilter)
+        if ($extraFilter) {
             $condition .= "AND ($extraFilter)";
+        }
         return DataObject::get('KnowledgeBaseArticle', $condition, 'Created DESC', null, $limit);
     }
 
@@ -300,7 +307,6 @@ class KnowledgeBasePage_Controller extends Page_Controller
      **/
     public function BestArticles($limit = 5)
     {
-
         $kbID = $this->data()->getKnowledgeBaseID();
 
         $condition =
@@ -319,12 +325,12 @@ class KnowledgeBasePage_Controller extends Page_Controller
                 // return DataObject::get('KnowledgeBaseArticle', $condition, '`Ratings`.`Rating` DESC', $left_join, $limit);
 
             return DataObject::get('KnowledgeBaseArticle', $condition)
-                ->leftJoin("KnowledgeBaseArticleRating","\"KnowledgeBaseArticleRating\".\"ArticleID\" = \"KnowledgeBaseArticle\".\"ID\"")
+                ->leftJoin("KnowledgeBaseArticleRating", "\"KnowledgeBaseArticleRating\".\"ArticleID\" = \"KnowledgeBaseArticle\".\"ID\"")
                 ->sort("\"KnowledgeBaseArticleRating\".\"Rating\"")
                 ->limit($limit);
     }
 
-    function init()
+    public function init()
     {
         parent::init();
 
@@ -342,5 +348,4 @@ class KnowledgeBasePage_Controller extends Page_Controller
 
         Requirements::javascript(KNOWLEDGEBASE_MODULE_DIR . '/javascript/kb.search.js');
     }
-
 }

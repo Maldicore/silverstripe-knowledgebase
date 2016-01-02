@@ -13,7 +13,7 @@ class KnowledgeBaseCategory extends KnowledgeBasePage
         'KnowledgeBaseCategory'
     );
 
-    function getCMSFields()
+    public function getCMSFields()
     {
         $fields = parent::getCMSFields();
         $fields->addFieldToTab('Root.Main', new TextField('Description', 'Category Description', null, 255), 'Content');

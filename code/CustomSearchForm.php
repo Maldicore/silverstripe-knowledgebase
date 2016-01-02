@@ -34,25 +34,29 @@ class CustomSearchForm extends SearchForm
     {
         return $this->_searchField;
     }
-	
-	/**
-	 * Get the search query for display in a "You searched for ..." sentence.
-	 * 
-	 * @param array $data
-	 * @return string
-	 */
+    
+    /**
+     * Get the search query for display in a "You searched for ..." sentence.
+     * 
+     * @param array $data
+     * @return string
+     */
     public function getSearchQuery($data = null)
     {
-		if(!isset($data))
+        if (!isset($data)) {
             $data = $_REQUEST;
+        }
         
-        if (!is_array($this->_searchField))
+        if (!is_array($this->_searchField)) {
             return $data[$this->_searchField];
+        }
         
         // find first best result
-        foreach ($this->_searchField as $field)
-            if (isset($data[$field]))
+        foreach ($this->_searchField as $field) {
+            if (isset($data[$field])) {
                 return $data[$field];
+            }
+        }
     }
 
     /**
@@ -66,20 +70,21 @@ class CustomSearchForm extends SearchForm
     public function getResults($pageLength = null, $data = null)
     {
         // legacy usage: $data was defaulting to $_REQUEST, parameter not passed in doc.silverstripe.org tutorials
-        if (!isset($data) || !is_array($data))
+        if (!isset($data) || !is_array($data)) {
             $data = $_REQUEST;
+        }
 
         // set language (if present)
-        if (singleton('SiteTree')->hasExtension('Translatable') && isset($data['locale']))
-        {
+        if (singleton('SiteTree')->hasExtension('Translatable') && isset($data['locale'])) {
             $origLocale = Translatable::get_current_locale();
             Translatable::set_current_locale($data['locale']);
         }
 
         // Check all given search fields
         $keywords = $this->getSearchQuery($data);
-        if(empty($keywords))
+        if (empty($keywords)) {
             return new DataObjectSet();
+        }
 
         $andProcessor = create_function('$matches', '
 	 		return " +" . $matches[2] . " +" . $matches[4] . " ";
@@ -95,36 +100,33 @@ class CustomSearchForm extends SearchForm
 
         $keywords = $this->addStarsToKeywords($keywords);
 
-        if (!$pageLength)
+        if (!$pageLength) {
             $pageLength = $this->pageLength;
+        }
         $start = isset($_GET['start'])
                 ? (int) $_GET['start']
                 : 0;
 
-        if (strpos($keywords, '"') !== false || strpos($keywords, '+') !== false || strpos($keywords, '-') !== false || strpos($keywords, '*') !== false)
-        {
+        if (strpos($keywords, '"') !== false || strpos($keywords, '+') !== false || strpos($keywords, '-') !== false || strpos($keywords, '*') !== false) {
             $results = DB::getConn()->searchEngine($this->classesToSearch, $keywords, $start, $pageLength, "\"Relevance\" DESC", $this->_extraFilter, true);
-        }
-        else
-        {
+        } else {
             $results = DB::getConn()->searchEngine($this->classesToSearch, $keywords, $start, $pageLength, null, $this->_extraFilter);
         }
 
         // filter by permission
-        if ($results)
-            foreach ($results as $result)
-            {
-                if (!$result->canView())
+        if ($results) {
+            foreach ($results as $result) {
+                if (!$result->canView()) {
                     $results->remove($result);
+                }
             }
+        }
 
         // reset locale
-        if (singleton('SiteTree')->hasExtension('Translatable') && isset($data['locale']))
-        {
+        if (singleton('SiteTree')->hasExtension('Translatable') && isset($data['locale'])) {
             Translatable::set_current_locale($origLocale);
         }
 
         return $results;
     }
-
 }
